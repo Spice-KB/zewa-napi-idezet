@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daily Quote</title>
+<style>
+    /* --- STYLES (CSS) - Ugyanaz maradt --- */
+    :root {
+        --zewa-kek: #00A3E0;
+        --zewa-vilagoskek-bg: transparent; 
+        --zewa-vilagoskek-kiemel: #111585;
+        --szoveg-szurke: #fff;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        background-color: transparent; 
+        font-family: 'Lato', sans-serif;
+        overflow: hidden; 
+    }
+
+    #napi-idezet-helye {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        box-sizing: border-box;
+        padding-top: 25px; 
+    }
+
+    .napi-idezet-style {
+        font-size: 18px; 
+        line-height: normal; 
+        position: relative;
+        width: 100%; 
+        max-width: 680px; 
+        
+        background-color: #00A3E0;
+        border: 0; 
+        border-radius: 12px;
+
+        margin: 0 auto;
+        padding: 30px 20px 15px 20px;      
+        box-sizing: border-box;
+        
+        display: flex;
+        flex-direction: column; 
+        align-items: center;
+        
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+    }
+
+    .napi-idezet-style p {
+        position: relative;
+        z-index: 2; 
+        display: inline-block;
+        max-width: 650px; 
+        width: 90%; 
+        
+        font-size: 1.3em; 
+        font-style: italic;
+        color: var(--szoveg-szurke);
+        
+        text-align: left;
+        margin: 0; 
+        line-height: 1.4;
+        margin-left: 20px; 
+    }
+
+    /* Az angolban is a felső idézőjel (quote mark) a standard, ez maradhat */
+    .napi-idezet-style p::before {
+        content: '“';
+        font-family: 'Georgia', serif;
+        font-size: 4em; 
+        color: var(--zewa-vilagoskek-kiemel);    
+        position: absolute;
+        right: 100%; 
+        margin-right: 9px; 
+        top: -15px; 
+        z-index: 1; 
+        line-height: 1;
+    }
+
+    .napi-idezet-style footer {
+        width: 100%; 
+        text-align: right; 
+        margin-top: 15px; 
+        font-size: 0.8em;
+        font-weight: bold;
+        color: #111585;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+</head>
+<body>
+
+<div id="napi-idezet-helye"></div>
+
+<script>
+    // 1. English Quotes List (Feltöltöttem párral, ide másold be a többit!)
+    const motivaciosIdezetek = [
+{ idezet: "The purpose of our lives is to be happy.", szerzo: "Dalai Lama" },
+{ idezet: "Believe in yourself and all that you are. Know that there is something inside you greater than any obstacle.", szerzo: "Christian D. Larson" },
+{ idezet: "You are never too old to set another goal or to dream a new dream.", szerzo: "C.S. Lewis" },
+{ idezet: "Happiness is not something ready made. It comes from your own actions.", szerzo: "Dalai Lama" },
+{ idezet: "The nearer a man comes to a calm mind, the closer he is to strength.", szerzo: "Marcus Aurelius" },
+{ idezet: "Nothing can bring you peace but yourself.", szerzo: "Ralph Waldo Emerson" },
+{ idezet: "For every minute you are angry you lose sixty seconds of happiness.", szerzo: "Ralph Waldo Emerson" },
+{ idezet: "You don’t have to control your thoughts; you just have to stop letting them control you.", szerzo: "Dan Millman" },
+{ idezet: "The only person you are destined to become is the person you decide to be.", szerzo: "Ralph Waldo Emerson" },
+{ idezet: "Do what you can, with what you have, where you are.", szerzo: "Theodore Roosevelt" },
+{ idezet: "Happiness can be found even in the darkest of times if one only remembers to turn on the light.", szerzo: "J.K. Rowling" },
+{ idezet: "Progress, not perfection.", szerzo: "Unknown" },
+{ idezet: "Let go of what you can’t control.", szerzo: "Unknown" },
+{ idezet: "Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.", szerzo: "Buddha" },
+{ idezet: "The best way out is always through.", szerzo: "Robert Frost" },
+{ idezet: "The mind is everything. What you think you become.", szerzo: "Buddha" },
+{ idezet: "It does not matter how slowly you go as long as you do not stop.", szerzo: "Confucius" },
+{ idezet: "Happiness is a direction, not a place.", szerzo: "Sydney J. Harris" },
+{ idezet: "Act as if what you do makes a difference. It does.", szerzo: "William James" },
+{ idezet: "When we are no longer able to change a situation, we are challenged to change ourselves.", szerzo: "Viktor Frankl" },
+{ idezet: "Every action you take is a vote for the type of person you wish to become.", szerzo: "James Clear" },
+{ idezet: "Owning our story and loving ourselves through that process is the bravest thing we’ll ever do.", szerzo: "Brené Brown" },
+{ idezet: "A calm and modest life brings more happiness than the pursuit of success combined with constant restlessness.", szerzo: "Albert Einstein" },
+{ idezet: "Do the best you can until you know better. Then when you know better, do better.", szerzo: "Maya Angelou" },
+{ idezet: "If you change the way you look at things, the things you look at change.", szerzo: "Wayne Dyer" },
+{ idezet: "You gain strength, courage, and confidence by every experience.", szerzo: "Eleanor Roosevelt" },
+{ idezet: "Calm mind brings inner strength and self-confidence.", szerzo: "Dalai Lama" },
+{ idezet: "Setting goals is the first step in turning the invisible into the visible.", szerzo: "Tony Robbins" },
+{ idezet: "Do the best you can until you know better. Then do better.", szerzo: "Maya Angelou" },
+{ idezet: "Happiness depends upon ourselves.", szerzo: "Aristotle" },
+{ idezet: "True happiness is to enjoy the present.", szerzo: "Seneca" },
+{ idezet: "Good life is a process, not a state of being.", szerzo: "Carl Rogers" },
+{ idezet: "Optimism is the faith that leads to achievement.", szerzo: "Helen Keller" },
+{ idezet: "The secret of getting ahead is getting started.", szerzo: "Mark Twain" },
+{ idezet: "What is necessary to change a person is to change awareness of oneself.", szerzo: "Abraham Maslow" },
+{ idezet: "Happiness is a skill you can learn.", szerzo: "Naval Ravikant" },
+{ idezet: "The best way to predict the future is to create it.", szerzo: "Peter Drucker" },
+{ idezet: "Believe you can and you’re halfway there.", szerzo: "Theodore Roosevelt" },
+{ idezet: "Keep your face always toward the sunshine—and shadows will fall behind you.", szerzo: "Walt Whitman" },
+{ idezet: "The future belongs to those who believe in the beauty of their dreams.", szerzo: "Eleanor Roosevelt" },
+{ idezet: "Success is not the key to happiness. Happiness is the key to success.", szerzo: "Albert Schweitzer" },
+{ idezet: "You are braver than you believe, stronger than you seem, and smarter than you think.", szerzo: "A.A. Milne" },
+{ idezet: "Life is 10% what happens to us and 90% how we react to it.", szerzo: "Charles R. Swindoll" },
+{ idezet: "There is nothing either good or bad, but thinking makes it so.", szerzo: "William Shakespeare" },
+{ idezet: "Happiness often sneaks in through a door you didn’t know you left open.", szerzo: "John Barrymore" },
+{ idezet: "Happiness is an inside job.", szerzo: "William Arthur Ward" },
+{ idezet: "The best things in life are free.", szerzo: "Coco Chanel" },
+{ idezet: "Choose joy every day.", szerzo: "Oprah Winfrey" },
+{ idezet: "The happiness of your life depends upon the quality of your thoughts.", szerzo: "Marcus Aurelius" },
+{ idezet: "Happiness is good health and a bad memory.", szerzo: "Ingrid Bergman" },
+{ idezet: "Find joy in everything you choose to do.", szerzo: "Chuck Palahniuk" },
+{ idezet: "The only way to do great work is to love what you do.", szerzo: "Steve Jobs" },
+{ idezet: "Faith is taking the first step even when you don’t see the whole staircase.", szerzo: "Martin Luther King Jr." },
+{ idezet: "It always seems impossible until it’s done.", szerzo: "Nelson Mandela" },
+{ idezet: "In the middle of every difficulty lies opportunity.", szerzo: "Albert Einstein" },
+{ idezet: "We may encounter many defeats but we must not be defeated.", szerzo: "Maya Angelou" },
+{ idezet: "For every minute you are angry you lose sixty seconds of happiness.", szerzo: "Ralph Waldo Emerson" },
+{ idezet: "Change your thoughts and you change your world.", szerzo: "Norman Vincent Peale" },
+{ idezet: "Either you run the day or the day runs you.", szerzo: "Jim Rohn" },
+{ idezet: "Whether you think you can or think you can’t, you’re right.", szerzo: "Henry Ford" },
+{ idezet: "Success is not final, failure is not fatal: it is the courage to continue that counts.", szerzo: "Winston Churchill" },
+{ idezet: "Life is really simple, but we insist on making it complicated.", szerzo: "Confucius" },
+{ idezet: "Not all storms come to disturb your life, some come to clear your way.", szerzo: "Sister Shivani" },
+{ idezet: "Life is like riding a bicycle. To keep your balance, you must keep moving.", szerzo: "Albert Einstein" },
+{ idezet: "To live is the rarest thing in the world. Most people exist, that is all.", szerzo: "Oscar Wilde" },
+{ idezet: "Do one thing every day that scares you.", szerzo: "Eleanor Roosevelt" },
+{ idezet: "If you want to be happy, be.", szerzo: "Leo Tolstoy" },
+{ idezet: "How wonderful it is that nobody need wait a single moment before starting to improve the world.", szerzo: "Anne Frank" },
+{ idezet: "Don’t judge each day by the harvest you reap but by the seeds that you plant.", szerzo: "Robert Louis Stevenson" },
+{ idezet: "Life isn’t about finding yourself. Life is about creating yourself.", szerzo: "George Bernard Shaw" },
+{ idezet: "The greatest discovery of any generation is that a human can alter his life by altering his attitude.", szerzo: "William James" },
+{ idezet: "Let everything happen to you: beauty and terror. Just keep going.", szerzo: "Rainer Maria Rilke" },
+{ idezet: "In the depth of winter, I finally learned that there was in me an invincible summer.", szerzo: "Albert Camus" },
+{ idezet: "Nothing can be changed until it is faced.", szerzo: "James Baldwin" },
+{ idezet: "The world breaks everyone, and afterward many are strong at the broken places.", szerzo: "Ernest Hemingway" },
+{ idezet: "Example is not the main thing in influencing others. It is the only thing.", szerzo: "Albert Schweitzer" },
+{ idezet: "Owning our story and loving ourselves through that process is the bravest thing we’ll ever do.", szerzo: "Brené Brown" },
+{ idezet: "Hardships often prepare ordinary people for an extraordinary destiny.", szerzo: "C.S. Lewis" },
+{ idezet: "Your talent is God’s gift to you. What you do with it is your gift back.", szerzo: "Leo Buscaglia" },
+{ idezet: "Let your life lightly dance on the edges of time.", szerzo: "Rabindranath Tagore" },
+{ idezet: "Some of us think holding on makes us strong, but sometimes it is letting go.", szerzo: "Hermann Hesse" },
+{ idezet: "Attention is the rarest and purest form of generosity.", szerzo: "Simone Weil" },
+{ idezet: "When we are no longer able to change a situation, we are challenged to change ourselves.", szerzo: "Victor Frankl" },
+{ idezet: "Hope is like peace. It is not a gift from God. It is a gift only we can give one another.", szerzo: "Elie Wiesel" },
+{ idezet: "Life can only be understood backwards; but it must be lived forwards.", szerzo: "Søren Kierkegaard" },
+{ idezet: "Every end in history necessarily contains a new beginning.", szerzo: "Hannah Arendt" },
+{ idezet: "You don’t have to be great to start, but you have to start to be great.", szerzo: "Zig Ziglar" },
+{ idezet: "We don’t even know how strong we are until we are forced to bring that hidden strength forward.", szerzo: "Isabel Allende" },
+{ idezet: "The meaning of life is just to be alive.", szerzo: "Alan Watts" },
+{ idezet: "Beauty begins the moment you decide to be yourself.", szerzo: "Coco Chanel" }
+    ];
+
+    // 2. Logic (Ez ugyanaz marad)
+    function getNapiIdezet() {
+        const ma = new Date();
+        const evNapja = Math.floor((ma - new Date(ma.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)); 
+        const index = (evNapja - 2) % motivaciosIdezetek.length; 
+        
+        if (index < 0) {
+            return motivaciosIdezetek[0];
+        }
+        return motivaciosIdezetek[index];
+    }
+
+    // 3. Render
+    const idezetObj = getNapiIdezet();
+    const idezetHelye = document.getElementById("napi-idezet-helye");
+
+    if (idezetHelye) {
+        idezetHelye.innerHTML = `<blockquote class="napi-idezet-style"><p>${idezetObj.idezet}</p><footer>${idezetObj.szerzo}</footer></blockquote>`;
+    }
+</script>
+
+</body>
+</html>
