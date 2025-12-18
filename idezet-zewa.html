@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Napi Idézet</title>
+<style>
+    /* --- STÍLUSOK --- */
+    :root {
+        --zewa-kek: #00A3E0;
+        --zewa-vilagoskek-bg: transparent; 
+        --zewa-vilagoskek-kiemel: #111585;
+        --szoveg-szurke: #fff;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        /* Átlátszó háttér, hogy belesimuljon az oldalba */
+        background-color: transparent; 
+        font-family: 'Lato', sans-serif;
+        /* Gördítősáv letiltása */
+        overflow: hidden; 
+    }
+
+    #napi-idezet-helye {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        box-sizing: border-box;
+        /* Kis hely felül, hogy az idézőjel ne lógjon le */
+        padding-top: 25px; 
+    }
+
+    .napi-idezet-style {
+        font-size: 18px; 
+        line-height: normal; 
+        position: relative;
+        width: 100%; 
+        /* Maximális szélesség a doboznak */
+        max-width: 680px; 
+        
+        background-color: #00A3E0;
+        /* Keret eltüntetése vagy színre állítása */
+        border: 0; 
+        border-radius: 12px;
+
+        margin: 0 auto;
+        padding: 30px 20px 15px 20px;      
+        box-sizing: border-box;
+        
+        display: flex;
+        flex-direction: column; 
+        align-items: center;
+        
+        /* Árnyék, hogy szebb legyen (opcionális, de profibb) */
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+    }
+
+    .napi-idezet-style p {
+        position: relative;
+        z-index: 2; 
+        display: inline-block;
+        max-width: 650px; 
+        width: 90%; 
+        
+        font-size: 1.3em; 
+        font-style: italic;
+        color: var(--szoveg-szurke);
+        
+        text-align: left;
+        margin: 0; 
+        line-height: 1.4;
+        margin-left: 20px; 
+    }
+
+    .napi-idezet-style p::before {
+        content: '“';
+        font-family: 'Georgia', serif;
+        font-size: 4em; 
+        color: var(--zewa-vilagoskek-kiemel);    
+        position: absolute;
+        right: 100%; 
+        margin-right: 9px; 
+        top: -15px; 
+        z-index: 1; 
+        line-height: 1;
+    }
+
+    .napi-idezet-style footer {
+        width: 100%; 
+        text-align: right; 
+        margin-top: 15px; 
+        font-size: 0.8em;
+        font-weight: bold;
+        color: #111585;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+</style>
+</head>
+<body>
+
+<div id="napi-idezet-helye"></div>
+
+<script>
+    // 1. Az idézetek listája
+    const motivaciosIdezetek = [
+        { idezet: "Az életünk célja a boldogság.", szerzo: "Dalai Lama" },
+        { idezet: "Higgy magadban és abban, aki vagy. Tudd, hogy van benned valami, ami nagyobb bármely akadálynál.", szerzo: "Christian D. Larson" },
+        { idezet: "Soha nem vagy túl idős egy új cél kitűzéséhez vagy új álom megálmodásához.", szerzo: "C.S. Lewis" },
+        { idezet: "A boldogság nem készen kapott dolog; a saját tetteidből fakad.", szerzo: "Dalai Lama" },
+        { idezet: "Minél közelebb kerül valaki a nyugodt elméhez, annál közelebb van az erőhöz.", szerzo: "Marcus Aurelius" },
+        { idezet: "Semmi sem hozhat békét, csak te magad.", szerzo: "Ralph Waldo Emerson" },
+        { idezet: "Minden perc harag hatvan másodperc boldogságtól foszt meg.", szerzo: "Ralph Waldo Emerson" },
+        { idezet: "Nem kell irányítanod minden gondolatod; csak azt kell megállítanod, hogy ők irányítsanak téged.", szerzo: "Dan Millman" },
+        { idezet: "Az egyetlen személy, akivé sorsod szerint válsz, az, akivé te döntesz válni.", szerzo: "Ralph Waldo Emerson" },
+        { idezet: "Tedd, amit tudsz, azzal, amid van, ott ahol vagy.", szerzo: "Theodore Roosevelt" },
+        { idezet: "A boldogság még a legsötétebb időkben is ott van, ha valaki emlékszik hol kell felkapcsolni a lámpát.", szerzo: "J.K. Rowling" },
+        { idezet: "A haladás a fontos, nem a tökéletesség.", szerzo: "Ismeretlen szerző" },
+        { idezet: "Engedd el azt, amit nem tudsz kontrollálni.", szerzo: "Ismeretlen szerző" },
+        { idezet: "Ne ragadj a múltban, ne álmodozz a jövőről; csak összpontosíts a jelen pillanatra.", szerzo: "Buddha" },
+        { idezet: "A legjobb kiút mindig keresztül vezet.", szerzo: "Robert Frost" },
+        { idezet: "Az elme minden. Az leszel, amit gondolsz.", szerzo: "Buddha" },
+        { idezet: "Nem számít, milyen lassan haladsz, amíg nem állsz meg.", szerzo: "Konfuciusz" },
+        { idezet: "A boldogság egy irány, nem egy hely.", szerzo: "Sydney J. Harris" },
+        { idezet: "Cselekedj úgy, mintha számítana, amit teszel. Mert számít.", szerzo: "William James" },
+        { idezet: "Amikor már nem tudjuk megváltoztatni a helyzetet, önmagunk megváltoztatása a kihívás.", szerzo: "Viktor Frankl" },
+        { idezet: "Minden cselekedeted egy szavazat arra, milyen emberré szeretnél válni.", szerzo: "James Clear" },
+        { idezet: "A történetünk felvállalása és önmagunk szeretete a legbátrabb dolog.", szerzo: "Brené Brown" },
+        { idezet: "A nyugodt, szerény élet több boldogságot ad, mint a nyugtalansággal járó sikerhajszolás.", szerzo: "Albert Einstein" },
+        { idezet: "Tedd a legjobbat, amit tudsz. Ha többet tudsz, tegyél jobban.", szerzo: "Maya Angelou" },
+        { idezet: "Ha megváltoztatod, ahogy nézed a dolgokat, a dolgok is megváltoznak.", szerzo: "Wayne Dyer" },
+        { idezet: "Minden tapasztalat erőt, bátorságot és önbizalmat ad.", szerzo: "Eleanor Roosevelt" },
+        { idezet: "A nyugodt elme belső erőt és önbizalmat ad.", szerzo: "Dalai Lama" },
+        { idezet: "A célkitűzés az első lépés ahhoz, hogy az elképzelésből valóság legyen.", szerzo: "Tony Robbins" },
+        { idezet: "Tedd a legjobbat, amit tudsz; ha többet tudsz, tedd jobban.", szerzo: "Maya Angelou" },
+        { idezet: "A boldogság rajtunk múlik.", szerzo: "Aristotle" },
+        { idezet: "Az igazi boldogság a jelen élvezete.", szerzo: "Seneca" },
+        { idezet: "A jó élet egy folyamat, nem egy állapot.", szerzo: "Carl Rogers" },
+        { idezet: "Az optimizmus az a hit, amely eredményhez vezet.", szerzo: "Helen Keller" },
+        { idezet: "Az előrejutás titka az elkezdés.", szerzo: "Mark Twain" },
+        { idezet: "A változáshoz az önmagunkról alkotott tudatosságot kell megváltoztatni.", szerzo: "Abraham Maslow" },
+        { idezet: "A boldogság tanulható készség.", szerzo: "Naval Ravikant" },
+        { idezet: "A legjobb módja a jövő megjóslásának, ha megtervezzük azt.", szerzo: "Peter Drucker" },
+        { idezet: "Higgy magadban, és már félig ott is vagy.", szerzo: "Theodore Roosevelt" },
+        { idezet: "Tartsd az arcod mindig a nap felé — és az árnyék mögéd esik.", szerzo: "Walt Whitman" },
+        { idezet: "A jövő azoké, akik hisznek álmaik szépségében.", szerzo: "Eleanor Roosevelt" },
+        { idezet: "A siker nem a boldogság kulcsa. A boldogság a siker kulcsa.", szerzo: "Albert Schweitzer" },
+        { idezet: "Bátrabb vagy, mint hiszed, erősebb, mint látszol, és okosabb, mint gondolod.", szerzo: "A.A. Milne" },
+        { idezet: "Az élet 10%-ban abból áll, ami velünk történik, és 90%-ban abból, hogyan reagálunk rá.", szerzo: "Charles R. Swindoll:" },
+        { idezet: "Semmi sem jó vagy rossz önmagában — a gondolkodás teszi azzá.", szerzo: "William Shakespeare" },
+        { idezet: "A boldogság gyakran lopakodik be azon az ajtón, amelyről nem is tudtad, hogy nyitva hagytad.", szerzo: "John Barrymore" },
+        { idezet: "A boldogság belső munka.", szerzo: "William Arthur Ward" },
+        { idezet: "Az életben a legjobb dolgok ingyen vannak.", szerzo: "Coco Chanel" },
+        { idezet: "Válaszd az örömöt minden nap.", szerzo: "Oprah Winfrey" },
+        { idezet: "Életed boldogsága a gondolataid minőségétől függ.", szerzo: "Marcus Aurelius" },
+        { idezet: "A boldogság a jó egészség és a rossz memória.", szerzo: "Ingrid Bergman" },
+        { idezet: "Találj örömöt mindenben, amit csinálsz.", szerzo: "Chuck Palahniuk" },
+        { idezet: "Az egyetlen módja, hogy nagyszerű munkát végezz, az, hogy szeresd, amit csinálsz.", szerzo: "Steve Jobs" },
+        { idezet: "A hit az, ha megteszed az első lépést akkor is, ha nem látod a teljes lépcsőt.", szerzo: "Martin Luther King Jr." },
+        { idezet: "Mindig lehetetlennek tűnik, amíg meg nem történik.", szerzo: "Nelson Mandela" },
+        { idezet: "Minden nehézség közepén ott rejlik a lehetőség.", szerzo: "Albert Einstein" },
+        { idezet: "Sok vereséggel találkozhatunk, de nem szabad legyőzöttnek lennünk.", szerzo: "Maya Angelou" },
+        { idezet: "Minden perc harag hatvan másodperc boldogságtól foszt meg.", szerzo: "Ralph Waldo Emerson" },
+        { idezet: "Változtasd meg a gondolataid, és megváltozik a világod.", szerzo: "Norman Vincent Peale" },
+        { idezet: "Vagy te irányítod a napot, vagy a nap irányít téged.", szerzo: "Jim Rohn" },
+        { idezet: "Akár azt gondolod, hogy képes vagy rá, akár azt, hogy nem, mindkét esetben igazad lesz.", szerzo: "Henry Ford" },
+        { idezet: "A siker nem végleges, a kudarc nem végzetes: az számít, hogy van-e bátorságod folytatni.", szerzo: "Winston Churchill" },
+        { idezet: "Az élet valójában egyszerű, de mi ragaszkodunk hozzá, hogy bonyolulttá tegyük.", szerzo: "Confucius" },
+        { idezet: "Nem minden vihar zavarja össze az életed; néhány kitisztítja az utat.", szerzo: "Sister Shivani" },
+        { idezet: "Az élet olyan, mint a biciklizés: az egyensúlyhoz mozgásban kell maradni.", szerzo: "Albert Einstein" },
+        { idezet: "Élni a világon a legritkább dolog. A legtöbben csak léteznek.", szerzo: "Oscar Wilde" },
+        { idezet: "Tégy minden nap valamit, ami egy kicsit megijeszt.", szerzo: "Eleanor Roosevelt" },
+        { idezet: "Ha boldog akarsz lenni, légy az.", szerzo: "Leo Tolstoy" },
+        { idezet: "Milyen csodálatos, hogy senkinek sem kell egy pillanatot sem várnia, hogy jobbá tegye a világot.", szerzo: "Anne Frank" },
+        { idezet: "Ne az alapján ítéld meg a napot, amit learattál, hanem amit elültettél.", szerzo: "Robert Louis Stevenson" },
+        { idezet: "Az élet nem az önmagunk megtalálásáról szól, hanem az önmagunk megteremtéséről.", szerzo: "George Bernard Shaw" },
+        { idezet: "A legnagyobb felfedezés az összes közül az, hogy az ember képes megváltoztatni az életét a hozzáállása megváltoztatásával.", szerzo: "William James" },
+        { idezet: "Engedd, hogy minden megtörténjen veled: szépség és borzalom. Csak menj tovább.", szerzo: "Rainer Maria Rilke" },
+        { idezet: "A tél mélyén tanultam meg, hogy bennem egy legyőzhetetlen nyár él.", szerzo: "Albert Camus" },
+        { idezet: "Semmit sem lehet megváltoztatni addig, amíg nem nézünk vele szembe.", szerzo: "James Baldwin" },
+        { idezet: "A világ mindenkit megtör, de sokan épp a töréseiknél válnak erőssé.", szerzo: "Ernest Hemingway" },
+        { idezet: "A példamutatás nem a legfontosabb dolog a hatásgyakorlásban – az egyetlen.", szerzo: "Albert Schweitzer" },
+        { idezet: "A történetünk felvállalása és az önszeretet a legbátrabb dolog, amit tehetünk.", szerzo: "Brené Brown" },
+        { idezet: "A nehézségek gyakran rendkívüli sorsra készítenek fel hétköznapi embereket.", szerzo: "C.S. Lewis" },
+        { idezet: "A tehetséged ajándék. Az, amit kezdesz vele, a te ajándékod.", szerzo: "Leo Buscaglia" },
+        { idezet: "Engedd, hogy az életed könnyedén táncoljon az idő peremén.", szerzo: "Rabindranath Tagore" },
+        { idezet: "Néha azt hisszük, a kapaszkodás az erő, pedig néha az elengedés.", szerzo: "Hermann Hesse" },
+        { idezet: "A figyelem a nagylelkűség legritkább és legtisztább formája.", szerzo: "Simone Weil" },
+        { idezet: "Ha már nem tudjuk megváltoztatni a helyzetet, önmagunk megváltoztatására kapunk kihívást.", szerzo: "Victor Frankl" },
+        { idezet: "A remény olyan, mint a béke: nem ajándék, hanem olyasmi, amit egymásnak adhatunk.", szerzo: "Elie Wiesel" },
+        { idezet: "Az életet csak visszafelé lehet megérteni, de előre kell élni.", szerzo: "Søren Kierkegaard" },
+        { idezet: "A történelem minden végében ott rejlik egy új kezdet.", szerzo: "Hannah Arendt" },
+        { idezet: "Nem kell nagynak lenned az induláshoz, de el kell indulnod ahhoz, hogy nagy legyél.", szerzo: "Zig Ziglar" },
+        { idezet: "Nem is tudjuk, milyen erősek vagyunk, amíg elő nem kell hívnunk a rejtett erőnket.", szerzo: "Isabel Allende" },
+        { idezet: "Az élet értelme egyszerűen az, hogy éljünk.", szerzo: "Alan Watts" },
+        { idezet: "A szépség abban a pillanatban kezdődik, amikor eldöntöd, hogy önmagad leszel.", szerzo: "Coco Chanel" }
+    ];
+
+    // 2. Funkció az idézet kiválasztásához
+    function getNapiIdezet() {
+        const ma = new Date();
+        const evNapja = Math.floor((ma - new Date(ma.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24)); 
+        const index = (evNapja - 2) % motivaciosIdezetek.length; 
+        
+        if (index < 0) {
+            return motivaciosIdezetek[0];
+        }
+        return motivaciosIdezetek[index];
+    }
+
+    // 3. Megjelenítés
+    const idezetObj = getNapiIdezet();
+    const idezetHelye = document.getElementById("napi-idezet-helye");
+
+    if (idezetHelye) {
+        idezetHelye.innerHTML = `<blockquote class="napi-idezet-style"><p>${idezetObj.idezet}</p><footer>${idezetObj.szerzo}</footer></blockquote>`;
+    }
+</script>
+
+</body>
+</html>
