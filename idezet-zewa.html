@@ -16,20 +16,25 @@
     body {
         margin: 0;
         padding: 0;
-        /* Átlátszó háttér, hogy belesimuljon az oldalba */
+        /* Átlátszó háttér */
         background-color: transparent; 
         font-family: 'Lato', sans-serif;
         /* Gördítősáv letiltása */
         overflow: hidden; 
+        
+        /* ÚJ: FÜGGŐLEGES KÖZÉPRE IGAZÍTÁS */
+        /* Ez biztosítja, hogy az idézet mindig az iframe közepén lebegjen */
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     #napi-idezet-helye {
         width: 100%;
-        display: flex;
-        justify-content: center;
         box-sizing: border-box;
-        /* Kis hely felül, hogy az idézőjel ne lógjon le */
-        padding-top: 25px; 
+        /* A paddingot kicsit átírtam, hogy a középre igazítás szebb legyen */
+        padding: 10px; 
     }
 
     .napi-idezet-style {
@@ -41,7 +46,7 @@
         max-width: 680px; 
         
         background-color: #00A3E0;
-        /* Keret eltüntetése vagy színre állítása */
+        /* Keret eltüntetése */
         border: 0; 
         border-radius: 12px;
 
@@ -53,7 +58,7 @@
         flex-direction: column; 
         align-items: center;
         
-        /* Árnyék, hogy szebb legyen (opcionális, de profibb) */
+        /* Árnyék */
         box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
     }
 
@@ -96,6 +101,31 @@
         color: #111585;
         text-transform: uppercase;
         letter-spacing: 1px;
+    }
+
+    /* --- ÚJ: MOBIL OPTIMALIZÁLÁS --- */
+    @media only screen and (max-width: 600px) {
+        .napi-idezet-style {
+            padding: 20px 15px 15px 15px; /* Kisebb belső margó */
+            max-width: 95%; 
+        }
+
+        .napi-idezet-style p {
+            font-size: 1.1em; /* Picit kisebb betűméret */
+            margin-left: 15px; 
+            width: 92%;
+        }
+
+        .napi-idezet-style p::before {
+            font-size: 3em; /* Kisebb idézőjel */
+            top: -10px;
+            margin-right: 5px;
+        }
+        
+        .napi-idezet-style footer {
+            margin-top: 10px;
+            font-size: 0.75em;
+        }
     }
 </style>
 </head>
@@ -220,4 +250,5 @@
 </script>
 
 </body>
+
 </html>
